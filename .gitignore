@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.idea/
+.vscode/
+.pytest_cache/
+.coverage
+image_cache/
+results/
+results_*/
+*.npz
+*.zip
+*.log
