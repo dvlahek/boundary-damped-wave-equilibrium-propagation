@@ -1,0 +1,31 @@
+{
+  "version": "1.2.0-paper",
+  "statistical_refinement": {
+    "analysis_seed": 20260813,
+    "cluster_bootstrap_replicates": 50000,
+    "equivalence_margin_accuracy": 0.02,
+    "block_keys": ["dataset", "seed"],
+    "paired_keys": ["dataset", "seed", "chain_size"],
+    "references": ["implicit_id", "standard_eqprop", "uniform_dynamic"],
+    "multiplicity_correction": "Holm"
+  },
+  "graph_topology_audit": {
+    "topologies": ["grid_4", "grid_5", "sparse_16", "sparse_25"],
+    "seeds": [17, 29, 43, 71, 97],
+    "samples_per_case": 8,
+    "damping_modes": ["boundary", "uniform_trace"],
+    "damping_trace": 0.1,
+    "nudging_strength": 0.035,
+    "dynamics_time_step": 0.12,
+    "maximum_steps": 360000,
+    "tolerance": 1e-5
+  },
+  "measurement_noise_audit": {
+    "topologies": ["grid_4", "grid_5", "sparse_16", "sparse_25"],
+    "seeds": [17, 29, 43, 71, 97],
+    "samples_per_case": 24,
+    "replicates_per_condition": 250,
+    "noise_models": ["independent_phase", "shared_sensor_bias"],
+    "relative_noise_levels": [0.0, 1e-5, 3e-5, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2]
+  }
+}

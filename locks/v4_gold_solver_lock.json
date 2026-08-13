@@ -1,0 +1,127 @@
+{
+  "version": "3.4",
+  "trained_models_unchanged": true,
+  "damping_profile_recalibrated": false,
+  "source_v33_lock_file": "mnist_damping_lock_v33.json",
+  "source_v33_lock_sha256": "29b6cc00f3180238221f6052c12cb3a1c0c9b7ee9315416a8a1beed8951f7f37",
+  "source_v33_phases_file": "mnist_boundary_phases_v33.csv",
+  "source_v33_phases_sha256": "24dd06797df9d9c0926012a86710005b9ae273a21b8b998ee22e3edf6cc15459",
+  "locked_damping_candidate": {
+    "width": 8,
+    "trace": 5.0,
+    "power": 1.0
+  },
+  "locked_damping_candidate_key": "width=8|trace=5|power=1",
+  "calibration_model_seed": 17,
+  "calibration_data_source": "training pool only",
+  "calibration_indices": [
+    26736,
+    43093,
+    31383,
+    11169,
+    16156,
+    29335,
+    13932,
+    18968,
+    22551,
+    12367,
+    6943,
+    14487,
+    13973,
+    28586,
+    33035,
+    52420,
+    26597,
+    10501,
+    40033,
+    3346,
+    10404,
+    2763,
+    31608,
+    44435,
+    7599,
+    12342,
+    14640,
+    48586,
+    52009,
+    46727,
+    13875,
+    8949
+  ],
+  "v33_excluded_calibration_indices": [
+    2416,
+    4228,
+    9377,
+    11053,
+    11899,
+    15070,
+    18936,
+    19226,
+    21391,
+    22739,
+    22941,
+    25840,
+    33941,
+    35177,
+    36508,
+    36938,
+    41367,
+    42021,
+    42209,
+    43210,
+    43293,
+    43508,
+    44938,
+    47632,
+    49840,
+    51081,
+    52199,
+    55003,
+    55182,
+    55413,
+    55486,
+    59981
+  ],
+  "calibration_subset_disjoint_from_v33": true,
+  "tolerance_grid": [
+    {
+      "free": 0.0001,
+      "nudged": 2e-05,
+      "key": "free=1e-04|nudged=2e-05"
+    },
+    {
+      "free": 0.0001,
+      "nudged": 1e-05,
+      "key": "free=1e-04|nudged=1e-05"
+    },
+    {
+      "free": 5e-05,
+      "nudged": 5e-06,
+      "key": "free=5e-05|nudged=5e-06"
+    },
+    {
+      "free": 2e-05,
+      "nudged": 2e-06,
+      "key": "free=2e-05|nudged=2e-06"
+    },
+    {
+      "free": 1e-05,
+      "nudged": 1e-06,
+      "key": "free=1e-05|nudged=1e-06"
+    }
+  ],
+  "selected_tolerance": {
+    "free": 1e-05,
+    "nudged": 1e-06
+  },
+  "selected_tolerance_key": "free=1e-05|nudged=1e-06",
+  "selection_thresholds": {
+    "maximum_state_relative_error": 0.0001,
+    "maximum_gradient_vs_exact_centered_relative_error": 0.01,
+    "minimum_gradient_cosine": 0.999,
+    "maximum_gradient_change_from_previous_budget": 0.002
+  },
+  "locked_before_v34_test_audit": true,
+  "v34_test_samples_exclude_all_v33_audit_indices": true,
+  "v33_lock_declared_locked_before_test_audit": true
+}

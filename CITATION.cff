@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated article and this software release."
+type: software
+title: "Boundary-Damped Wave Equilibrium Propagation"
+authors:
+  - family-names: Vlahek
+    given-names: Dino
+version: 1.2.0-paper
+date-released: 2026-08-13
+license: MIT
+repository-code: "https://github.com/dvlahek/boundary-damped-wave-equilibrium-propagation"

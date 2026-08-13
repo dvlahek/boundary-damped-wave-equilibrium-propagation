@@ -1,0 +1,30 @@
+{
+  "profile": "paper",
+  "datasets": ["moons", "circles", "xor", "spirals", "blobs"],
+  "chain_sizes": [3, 5, 7, 9],
+  "seeds": [101, 202, 303, 404, 505],
+  "methods": [
+    "boundary_dynamic",
+    "uniform_dynamic",
+    "standard_eqprop",
+    "implicit_id"
+  ],
+  "n_train": 280,
+  "n_test": 160,
+  "n_rbf": 18,
+  "epochs": 50,
+  "max_steps": 40000,
+  "tolerance": 7e-6,
+  "beta": 0.035,
+  "damping_schedule": "fixed_trace",
+  "damping_trace": 0.7,
+  "damping_scale": 1.0,
+  "endpoint_step_multiplier": 10,
+  "dynamics_dt": 0.2,
+  "free_tolerance_multiplier": 100.0,
+  "learning_rate_u": 0.0025,
+  "learning_rate_structure": 0.0003,
+  "chain_regime": "propagating",
+  "phase_protocol": "centered_pair_cache",
+  "accuracy_equivalence_margin": 0.02
+}
