@@ -5,7 +5,6 @@ title: "Boundary-Damped Wave Equilibrium Propagation"
 authors:
   - family-names: Vlahek
     given-names: Dino
-version: 1.2.0-paper
 date-released: 2026-08-13
 license: MIT
 repository-code: "https://github.com/dvlahek/boundary-damped-wave-equilibrium-propagation"
