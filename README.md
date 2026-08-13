@@ -1,19 +1,14 @@
 # Boundary-Damped Wave Equilibrium Propagation
 
-Minimal reproducibility code for boundary-damped wave equilibrium propagation.
-The repository implements the theoretical audits, controlled synthetic
-benchmark, locked MNIST and Fashion-MNIST experiments, block-aware statistical
-analysis, non-chain graph audit, dark-mode control, and measurement-noise audit
+Reproducibility code for boundary-damped wave equilibrium propagation. The repository implements the theoretical audits, controlled synthetic
+benchmark, locked MNIST and Fashion-MNIST experiments, block-aware statistical analysis, non-chain graph audit, dark-mode control, and measurement-noise audit
 reported in the accompanying study.
 
-The implementation uses a dimensionless damped wave model. It does not claim
-that a generic gravitational wave is a neural-network gradient. The tested
-claim is narrower: localized boundary dissipation can relax a wave-mediated
-system toward equilibrium, while centered equilibrium perturbations estimate
+The implementation uses a dimensionless damped wave model. It does not claim that a generic gravitational wave is a neural-network gradient. The tested
+claim: localized boundary dissipation can relax a wave-mediated system toward equilibrium, while centered equilibrium perturbations estimate
 the parameter gradient with a controlled finite-time error.
 
-No manuscript, precomputed result directory, downloaded dataset, or trained
-model is included. Every command writes its outputs under `results/`.
+Every command writes its outputs under `results/`.
 
 ## Installation
 
@@ -53,7 +48,7 @@ python audit_finite_time_gradient.py --profile quick --output-dir results/quick_
 python audit_chain_scaling.py --profile quick --output-dir results/quick_chain_scaling
 ```
 
-### V5 statistics, topology, dark-mode, and noise audits
+### Statistics, topology, dark-mode, and noise audits
 
 The statistics command uses the `benchmark_runs.csv` created by the preceding
 synthetic command.
