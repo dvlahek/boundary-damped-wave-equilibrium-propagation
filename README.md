@@ -162,9 +162,7 @@ python v4_locked_replication.py --dataset fashion_mnist --mode paper --seeds 17,
 - `locks/v5_experiment_config.json` records the block statistics, topology,
   seeds, damping, and noise settings added in release `v1.2.0-paper`.
 
-Generated results, caches, downloaded data, and model checkpoints are ignored
-by Git. The complete numerical result archive belongs in the article's
-Supplementary Data or an archival repository, not in the source repository.
+Generated results, downloaded datasets, caches, and model checkpoints are excluded from the repository. They can be reproduced using the documented commands, fixed configurations, and deterministic seeds.
 
 ## License
 
