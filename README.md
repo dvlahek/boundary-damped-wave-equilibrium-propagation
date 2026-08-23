@@ -98,6 +98,28 @@ Holm correction to the equivalence tests.
 python statistical_refinement.py --input results/synthetic_paper/benchmark_runs.csv --output results/statistical_refinement --margin 0.02 --bootstrap 50000 --seed 20260813
 ```
 
+### Higher-capacity gradient-usability control: 75 runs
+
+This auxiliary control uses a 17-node chain and recomputes the exact free
+equilibrium at every epoch. Boundary dynamics is still used for both
+gradient-forming nudged phases. The 60-run base control covers two moons,
+concentric circles, XOR, and intertwined spirals with 48 radial-basis
+features. The one-factor extension adds 15 spiral runs with 96 features while
+keeping all remaining settings fixed.
+
+```bash
+python high_capacity_control.py --workers 4
+python spirals_capacity_control.py --workers 4
+python spirals_96rbf_control.py --workers 4
+```
+
+The complete fixed configuration is recorded in
+`locks/high_capacity_gradient_usability_config.json`. A compact summary of
+the reported runs is stored in
+`reported_results/high_capacity_gradient_usability_summary.csv`. Full
+endpoint histories are regenerated under `results/` and remain excluded from
+Git.
+
 ### Theoretical chain audits
 
 ```bash
@@ -162,7 +184,7 @@ python v4_locked_replication.py --dataset fashion_mnist --mode paper --seeds 17,
 - `locks/v5_experiment_config.json` records the block statistics, topology,
   seeds, damping, and noise settings added in release `v1.2.0-paper`.
 
-Generated results, downloaded datasets, caches, and model checkpoints are excluded from the repository. They can be reproduced using the documented commands, fixed configurations, and deterministic seeds.
+Compact reported summaries are retained under `reported_results/`. Full generated results, downloaded datasets, caches, and model checkpoints are excluded from the repository. They can be reproduced using the documented commands, fixed configurations, and deterministic seeds.
 
 ## License
 
