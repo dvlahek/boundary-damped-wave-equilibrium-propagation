@@ -42,6 +42,7 @@ from boundary_rep_learning import (
     ChainConfig,
     ChainParameters,
     classification_metrics,
+    flatten_gradients,
     implicit_gradients,
     initialize_parameters,
     make_features,
@@ -57,7 +58,11 @@ METHODS = ("boundary_dynamic", "uniform_dynamic", "standard_eqprop", "implicit_i
 DATASETS = ("moons", "circles", "xor", "spirals", "blobs")
 DAMPING_SCHEDULES = ("legacy", "fixed_trace", "graded_trace", "impedance_terminal")
 CHAIN_REGIMES = ("legacy", "propagating")
-PHASE_PROTOCOLS = ("free_each_epoch", "centered_pair_cache")
+PHASE_PROTOCOLS = (
+    "free_each_epoch",
+    "centered_pair_cache",
+    "exact_free_boundary_pair",
+)
 
 
 @dataclass(frozen=True)
@@ -156,6 +161,8 @@ class RunSpec:
     n_train: int
     n_test: int
     n_rbf: int
+    n_input_nodes: int
+    rbf_sigma: float
     epochs: int
     max_steps: int
     tolerance: float
@@ -176,6 +183,7 @@ class RunSpec:
         return (
             f"{self.dataset}|n={self.chain_size}|seed={self.seed}|{self.method}"
             f"|train={self.n_train}|test={self.n_test}|rbf={self.n_rbf}"
+            f"|inputs={self.n_input_nodes}|rbfsigma={self.rbf_sigma:.4g}"
             f"|epochs={self.epochs}|steps={self.max_steps}"
             f"|tol={self.tolerance:.3g}|beta={self.beta:.3g}"
             f"|damping={self.damping_schedule}|stepmult={self.endpoint_step_multiplier}"
@@ -238,6 +246,7 @@ def chain_configuration(
     n_nodes: int,
     seed: int,
     beta: float,
+    n_input_nodes: int = 2,
     damping_schedule: str = "fixed_trace",
     damping_trace: float = 1.00,
     damping_scale: float = 1.0,
@@ -247,6 +256,8 @@ def chain_configuration(
         raise ValueError(f"unknown damping schedule: {damping_schedule}")
     if chain_regime not in CHAIN_REGIMES:
         raise ValueError(f"unknown chain regime: {chain_regime}")
+    if not 1 <= n_input_nodes < n_nodes:
+        raise ValueError("n_input_nodes must be between 1 and n_nodes - 1")
     boundary_width = max(1, int(round(n_nodes / 3.0)))
     if damping_schedule == "legacy":
         boundary_damping = (3.0 / n_nodes) ** 2
@@ -276,7 +287,7 @@ def chain_configuration(
         initial_edge_stiffness = 1.00
     return ChainConfig(
         n_nodes=n_nodes,
-        n_input_nodes=2,
+        n_input_nodes=n_input_nodes,
         stiffness_floor=stiffness_floor,
         edge_floor=edge_floor,
         boundary_width=boundary_width,
@@ -304,9 +315,9 @@ def prepare_data(spec: RunSpec) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.
     center_indices = rng.choice(spec.n_train, spec.n_rbf, replace=False)
     centers = x_train[center_indices]
     return (
-        make_features(x_train, centers, 0.72),
+        make_features(x_train, centers, spec.rbf_sigma),
         y_train,
-        make_features(x_test, centers, 0.72),
+        make_features(x_test, centers, spec.rbf_sigma),
         y_test,
     )
 
@@ -438,6 +449,7 @@ def run_one(
         spec.chain_size,
         spec.seed,
         spec.beta,
+        spec.n_input_nodes,
         spec.damping_schedule,
         spec.damping_trace,
         spec.damping_scale,
@@ -457,6 +469,10 @@ def run_one(
     endpoint_attempts = 0
     converged_calls = 0
     failed_endpoint_calls = 0
+    exact_free_solver_calls = 0
+    exact_free_solver_iterations = 0
+    gradient_relative_errors: list[float] = []
+    gradient_cosines: list[float] = []
     history: list[dict[str, object]] = []
     endpoint_diagnostics: list[dict[str, object]] = []
     failure_epoch: int | None = None
@@ -562,12 +578,27 @@ def run_one(
         failed_endpoint_calls += int(not bool(result["converged"]))
 
     for epoch in range(spec.epochs + 1):
-        needs_free_endpoint = (
-            epoch == 0
-            or spec.method == "implicit_id"
-            or spec.phase_protocol == "free_each_epoch"
-        )
-        if needs_free_endpoint:
+        if spec.phase_protocol == "exact_free_boundary_pair":
+            # Auxiliary gradient-usability control: remove long-chain free-phase
+            # relaxation as a confounder, but still obtain both gradient-forming
+            # nudged endpoints from the selected physical dynamics.  Recompute
+            # q0 after every parameter update so q+ and q- start at the exact
+            # free equilibrium of the current model.
+            q_free_cache, free_iterations, _ = solve_equilibrium(
+                params,
+                features_train,
+                config,
+                initial=q_free_cache,
+            )
+            exact_free_solver_calls += 1
+            exact_free_solver_iterations += int(free_iterations)
+        else:
+            needs_free_endpoint = (
+                epoch == 0
+                or spec.method == "implicit_id"
+                or spec.phase_protocol == "free_each_epoch"
+            )
+        if spec.phase_protocol != "exact_free_boundary_pair" and needs_free_endpoint:
             free = dynamic_endpoint(
                 epoch=epoch,
                 phase="free",
@@ -635,6 +666,52 @@ def run_one(
                     config,
                     spec.beta,
                 )
+                if spec.phase_protocol == "exact_free_boundary_pair":
+                    # Quantify the numerical effect of the dynamic endpoint
+                    # tolerance against the exact centered-EqProp estimator at
+                    # the same beta and current parameters.  This turns the
+                    # relaxed stopping threshold into an auditable quantity.
+                    exact_plus, _, _ = solve_equilibrium(
+                        params,
+                        features_train,
+                        config,
+                        targets=y_train,
+                        beta=spec.beta,
+                        initial=q_plus_cache,
+                    )
+                    exact_minus, _, _ = solve_equilibrium(
+                        params,
+                        features_train,
+                        config,
+                        targets=y_train,
+                        beta=-spec.beta,
+                        initial=q_minus_cache,
+                    )
+                    exact_gradients = symmetric_eqprop_gradients(
+                        exact_minus,
+                        exact_plus,
+                        params,
+                        features_train,
+                        config,
+                        spec.beta,
+                    )
+                    dynamic_vector = flatten_gradients(gradients)
+                    exact_vector = flatten_gradients(exact_gradients)
+                    exact_norm = float(np.linalg.norm(exact_vector))
+                    dynamic_norm = float(np.linalg.norm(dynamic_vector))
+                    relative_error = float(
+                        np.linalg.norm(dynamic_vector - exact_vector)
+                        / max(exact_norm, np.finfo(float).eps)
+                    )
+                    cosine = float(
+                        np.dot(dynamic_vector, exact_vector)
+                        / max(
+                            dynamic_norm * exact_norm,
+                            np.finfo(float).eps,
+                        )
+                    )
+                    gradient_relative_errors.append(relative_error)
+                    gradient_cosines.append(cosine)
             gradients.u += 3e-4 * params.u
             params.log_a = opt_a.update(params.log_a, gradients.log_a)
             params.log_w = opt_w.update(params.log_w, gradients.log_w)
@@ -690,6 +767,24 @@ def run_one(
         "endpoint_calls": endpoint_calls,
         "endpoint_attempts": endpoint_attempts,
         "failed_endpoint_calls": failed_endpoint_calls,
+        "exact_free_solver_calls": exact_free_solver_calls,
+        "exact_free_solver_iterations": exact_free_solver_iterations,
+        "gradient_relative_error_mean": (
+            float(np.mean(gradient_relative_errors))
+            if gradient_relative_errors
+            else np.nan
+        ),
+        "gradient_relative_error_max": (
+            float(np.max(gradient_relative_errors))
+            if gradient_relative_errors
+            else np.nan
+        ),
+        "gradient_cosine_mean": (
+            float(np.mean(gradient_cosines)) if gradient_cosines else np.nan
+        ),
+        "gradient_cosine_min": (
+            float(np.min(gradient_cosines)) if gradient_cosines else np.nan
+        ),
         "endpoint_convergence_fraction": converged_calls / max(endpoint_calls, 1),
         "run_status": run_status,
         "failure_epoch": failure_epoch,
@@ -1009,6 +1104,10 @@ def build_specs(args: argparse.Namespace) -> tuple[list[RunSpec], dict[str, obje
         raise ValueError("damping_trace and damping_scale must be positive")
     if args.learning_rate_u <= 0.0 or args.learning_rate_structure <= 0.0:
         raise ValueError("learning rates must be positive")
+    if args.n_input_nodes < 1:
+        raise ValueError("n_input_nodes must be positive")
+    if args.rbf_sigma <= 0.0:
+        raise ValueError("rbf_sigma must be positive")
     datasets = parse_csv_tuple(args.datasets, str) if args.datasets else base.datasets
     sizes = parse_csv_tuple(args.chain_sizes, int) if args.chain_sizes else base.chain_sizes
     seeds = parse_csv_tuple(args.seeds, int) if args.seeds else base.seeds
@@ -1028,6 +1127,8 @@ def build_specs(args: argparse.Namespace) -> tuple[list[RunSpec], dict[str, obje
         "n_train": args.n_train or base.n_train,
         "n_test": args.n_test or base.n_test,
         "n_rbf": args.n_rbf or base.n_rbf,
+        "n_input_nodes": args.n_input_nodes,
+        "rbf_sigma": args.rbf_sigma,
         "epochs": args.epochs if args.epochs is not None else base.epochs,
         "max_steps": args.max_steps or base.max_steps,
         "tolerance": args.tolerance or base.tolerance,
@@ -1052,6 +1153,8 @@ def build_specs(args: argparse.Namespace) -> tuple[list[RunSpec], dict[str, obje
             n_train=settings["n_train"],
             n_test=settings["n_test"],
             n_rbf=settings["n_rbf"],
+            n_input_nodes=settings["n_input_nodes"],
+            rbf_sigma=settings["rbf_sigma"],
             epochs=settings["epochs"],
             max_steps=settings["max_steps"],
             tolerance=settings["tolerance"],
@@ -1326,6 +1429,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-train", type=int)
     parser.add_argument("--n-test", type=int)
     parser.add_argument("--n-rbf", type=int)
+    parser.add_argument(
+        "--n-input-nodes",
+        type=int,
+        default=2,
+        help="number of leading chain nodes that receive the feature input",
+    )
+    parser.add_argument(
+        "--rbf-sigma",
+        type=float,
+        default=0.72,
+        help="width of the radial-basis features",
+    )
     parser.add_argument("--epochs", type=int)
     parser.add_argument("--max-steps", type=int)
     parser.add_argument("--tolerance", type=float)
@@ -1354,7 +1469,9 @@ def parse_args() -> argparse.Namespace:
         help=(
             "centered_pair_cache relaxes the free endpoint only at "
             "initialization and then warm-starts q+ and q- from their own "
-            "previous strict equilibria"
+            "previous strict equilibria; exact_free_boundary_pair computes "
+            "the current free equilibrium with Newton and uses the selected "
+            "dynamics only for the gradient-forming +beta and -beta phases"
         ),
     )
     parser.add_argument("--workers", type=int, default=max(1, min(4, (os.cpu_count() or 2) // 2)))
