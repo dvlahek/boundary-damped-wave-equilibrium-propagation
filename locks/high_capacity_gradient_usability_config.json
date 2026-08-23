@@ -1,0 +1,53 @@
+{
+  "experiment": "higher-capacity gradient-usability control",
+  "common": {
+    "chain_size": 17,
+    "n_input_nodes": 12,
+    "rbf_sigma": 0.55,
+    "n_train": 280,
+    "n_test": 160,
+    "epochs": 150,
+    "seeds": [
+      101,
+      202,
+      303,
+      404,
+      505
+    ],
+    "methods": [
+      "implicit_id",
+      "standard_eqprop",
+      "boundary_dynamic"
+    ],
+    "beta": 0.035,
+    "learning_rate_u": 0.01,
+    "learning_rate_structure": 0.001,
+    "damping_schedule": "graded_trace",
+    "damping_trace": 5,
+    "damping_scale": 1,
+    "dynamics_dt": 0.2,
+    "max_steps": 40000,
+    "endpoint_tolerance": 0.00002,
+    "endpoint_step_multiplier": 10,
+    "free_tolerance_multiplier": 100,
+    "chain_regime": "propagating",
+    "phase_protocol": "exact_free_boundary_pair"
+  },
+  "base_control": {
+    "datasets": [
+      "moons",
+      "circles",
+      "xor",
+      "spirals"
+    ],
+    "n_rbf": 48,
+    "requested_runs": 60
+  },
+  "one_factor_extension": {
+    "dataset": "spirals",
+    "changed_parameter": "n_rbf",
+    "base_value": 48,
+    "extension_value": 96,
+    "requested_runs": 15
+  }
+}
