@@ -12,3 +12,10 @@ results_*/
 *.npz
 *.zip
 *.log
+
+# Pre-patent BDW-EqProp hardware/PoC material stays out of the public paper repository.
+engineering_handoff/
+poc_hardware/
+hardware_validation/
+BDW_EqProp_Engineering_Handoff_*.docx
+BDW_EqProp_PoC_*.zip
