@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/publish-reported-results.yml"
+      - "make_paper_figures.py"
 
 permissions:
   contents: write
