@@ -46,7 +46,7 @@ def finish_figure(fig, output: Path, provenance: dict, inputs: list[Path]) -> No
     plt.close(fig)
     for path in inputs:
         register_input(provenance, output.name, path)
-    provenance[output.name]["outputs"] = [
+    provenance.setdefault(output.name, {})["outputs"] = [
         str(output),
         str(output.with_suffix(".pdf")),
     ]
