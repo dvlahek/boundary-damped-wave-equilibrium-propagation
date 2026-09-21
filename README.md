@@ -39,13 +39,17 @@ tests and are not the reported paper results.
 python benchmark_suite.py --profile quick --damping-schedule fixed_trace --damping-trace 0.7 --damping-scale 1.0 --phase-protocol centered_pair_cache --dynamics-dt 0.20 --learning-rate-u 0.0025 --learning-rate-structure 0.0003 --free-tolerance-multiplier 100 --endpoint-step-multiplier 10 --workers 2 --output-dir results/quick_synthetic
 ```
 
-### Theory audits
+### Theory and relaxation audits
 
 ```bash
 python audit_energy_observability.py --profile quick --output-dir results/quick_energy
 python audit_gradient_scaling.py --profile quick --output-dir results/quick_gradient
 python audit_finite_time_gradient.py --profile quick --output-dir results/quick_finite_time
 python audit_chain_scaling.py --profile quick --output-dir results/quick_chain_scaling
+python audit_fixed_resource_damping.py --profile quick --output-dir results/quick_fixed_resource
+python audit_modal_relaxation.py --profile quick --output-dir results/quick_modal_relaxation
+python audit_graph_placement_generalization.py --profile quick --output-dir results/quick_graph_placement
+python audit_timestep_refinement.py --profile quick --output-dir results/quick_timestep
 ```
 
 ### Statistics, topology, dark-mode, and noise audits
@@ -129,6 +133,38 @@ python audit_finite_time_gradient.py --profile paper --output-dir results/theory
 python audit_chain_scaling.py --profile paper --output-dir results/theory_chain_scaling
 ```
 
+### Fixed-resource damping-support audit
+
+This experiment fixes the 17-node chain, total damping trace, conservative
+parameters, nudging strength, and free-state initialization while varying the
+number of damped nodes over (m=1,2,4,6,8,17).
+
+```bash
+python audit_fixed_resource_damping.py --profile paper_refined --output-dir results/fixed_resource_damping
+```
+
+### Weak-damping modal-relaxation audit
+
+```bash
+python audit_modal_relaxation.py --profile paper --output-dir results/modal_relaxation
+```
+
+### Calibration-to-unseen sparse-graph placement
+
+The modal damping support is selected on calibration states, frozen, and then
+evaluated on unseen states against topology-only and matched-size random
+supports.
+
+```bash
+python audit_graph_placement_generalization.py --profile paper --output-dir results/graph_placement
+```
+
+### Timestep-refinement control
+
+```bash
+python audit_timestep_refinement.py --profile paper --output-dir results/timestep_refinement
+```
+
 ### Grid, sparse-graph, and dark-mode audits
 
 The graph command evaluates boundary and matched-trace uniform damping on
@@ -174,6 +210,30 @@ python v4_train_image_models.py --dataset fashion_mnist --profile paper --seeds 
 python v4_locked_replication.py --dataset fashion_mnist --mode paper --seeds 17,29,43 --models-dir results/fashion_models --cache-file image_cache/fashion_mnist_pca_32.npz --gold-lock locks/v4_gold_solver_lock.json --output-dir results/fashion_audit
 ```
 
+## Locked numerical results and manuscript figures
+
+The numerical tables used for the reported finite-relaxation, fixed-resource
+damping, modal-relaxation, graph-placement, and timestep-refinement results are
+stored under `reported_results/`. These are locked outputs from the paper-scale
+runs, not recomputed summaries.
+
+The manuscript figures associated with those tables can be regenerated with:
+
+```bash
+python make_paper_figures.py \
+  --support-dir reported_results/fixed_resource_damping \
+  --graph-dir reported_results/graph_placement \
+  --modal-dir reported_results/modal_relaxation \
+  --finite-time-dir reported_results/finite_time \
+  --timestep-dir reported_results/timestep_refinement \
+  --output-dir reported_results/figures
+```
+
+The generated `reported_results/figures/figure_provenance.json` records the
+SHA-256 hash of every numerical input used by each generated figure.
+`reported_results/manifest.json` records SHA-256 hashes and sizes for the
+locked result files retained in the repository.
+
 ## Registered configurations
 
 - `locks/synthetic_paper_config.json` records the controlled synthetic setup.
@@ -184,7 +244,11 @@ python v4_locked_replication.py --dataset fashion_mnist --mode paper --seeds 17,
 - `locks/v5_experiment_config.json` records the block statistics, topology,
   seeds, damping, and noise settings added in release `v1.2.0-paper`.
 
-Compact reported summaries are retained under `reported_results/`. Full generated results, downloaded datasets, caches, and model checkpoints are excluded from the repository. They can be reproduced using the documented commands, fixed configurations, and deterministic seeds.
+Locked numerical tables and compact reported summaries are retained under
+`reported_results/`. Downloaded datasets, caches, model checkpoints, and
+per-step endpoint histories that are not needed to reproduce the reported
+tables remain excluded from Git. They can be regenerated using the documented
+commands, fixed configurations, and deterministic seeds.
 
 ## License
 
