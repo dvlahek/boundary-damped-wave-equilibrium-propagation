@@ -8,11 +8,13 @@
     },
     "fixed_resource_damping": {
       "workflow_run": 35607332700,
-      "artifact_id": 10642158182
+      "artifact_id": 10642158182,
+      "artifact_sha256": "2e6dca37bd980578e2525d3f21a7412c4926a8cf57d97bbf55799e9c78f5faaf"
     },
     "graph_modal_timestep": {
       "workflow_run": 35609288004,
-      "artifact_id": 10645522176
+      "artifact_id": 10645522176,
+      "artifact_sha256": "8dbd85efcecd2c5d10c62a3af00e39d3296cc1e6908211b9a8f8ab12f4784b6e"
     }
   },
   "files": {
