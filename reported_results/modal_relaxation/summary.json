@@ -1,0 +1,28 @@
+{
+  "version": "revision-1.0",
+  "profile": "paper",
+  "sizes": [
+    3,
+    5,
+    9,
+    17,
+    33
+  ],
+  "seeds": [
+    17,
+    29
+  ],
+  "etas": [
+    0.0001,
+    0.0003,
+    0.001,
+    0.003,
+    0.01,
+    0.03
+  ],
+  "n_cases": 180,
+  "median_exact_decay_vs_eta_slope": 0.9999767448183037,
+  "minimum_exact_decay_vs_eta_r_squared": 0.9999997092741754,
+  "median_smallest_eta_relative_prediction_error": 1.873492463143216e-09,
+  "maximum_smallest_eta_relative_prediction_error": 4.538785854284633e-08
+}

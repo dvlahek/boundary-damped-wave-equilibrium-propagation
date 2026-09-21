@@ -1,0 +1,46 @@
+{
+  "version": "revision-1.0",
+  "profile": "paper_refined",
+  "chain_size": 17,
+  "support_widths": [
+    1,
+    2,
+    4,
+    6,
+    8,
+    17
+  ],
+  "beta": 0.035,
+  "fixed_total_damping_trace": 5.0,
+  "dt": 0.1,
+  "datasets": [
+    "moons",
+    "spirals"
+  ],
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "budgets": [
+    1000,
+    4000,
+    16000,
+    40000,
+    80000,
+    160000
+  ],
+  "n_run_rows": 216,
+  "all_damping_traces_fixed": true,
+  "all_modes_observable": true,
+  "maximum_exact_finite_beta_bias": 1.4670826175414733,
+  "target_metric": "dynamic_vs_exact_centered_relative_error",
+  "one_percent_relaxation_target_reached_fraction_by_support": {
+    "1": 0.0,
+    "2": 0.3333333333333333,
+    "4": 1.0,
+    "6": 1.0,
+    "8": 1.0,
+    "17": 1.0
+  }
+}

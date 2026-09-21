@@ -1,0 +1,21 @@
+{
+  "version": "revision-1.0",
+  "profile": "paper",
+  "physical_time": 1200.0,
+  "dt_values": [
+    0.2,
+    0.1,
+    0.05
+  ],
+  "support_widths": [
+    1,
+    6,
+    8
+  ],
+  "fixed_damping_trace": 5.0,
+  "n_cases": 54,
+  "maximum_dt_0p20_gradient_difference_vs_dt_0p05": 0.34581330321839854,
+  "maximum_dt_0p10_gradient_difference_vs_dt_0p05": 0.25546323611123056,
+  "maximum_split_energy_balance_error": 0.007136592432026178,
+  "median_observed_gradient_refinement_order": 1.1852495974561357
+}

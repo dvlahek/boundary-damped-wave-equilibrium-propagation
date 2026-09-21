@@ -1,0 +1,86 @@
+{
+  "_generator": {
+    "script": "make_paper_figures.py",
+    "purpose": "Manuscript figure generation from locked numerical CSV outputs"
+  },
+  "figure_architecture_overview.png": {
+    "outputs": [
+      "reported_results/figures/figure_architecture_overview.png",
+      "reported_results/figures/figure_architecture_overview.pdf"
+    ],
+    "note": "Data-free schematic generated directly by make_paper_figures.py"
+  },
+  "figure_damping_support_resource.png": {
+    "inputs": [
+      {
+        "path": "reported_results/fixed_resource_damping/runs.csv",
+        "sha256": "38aba3ea50a576dbc3c2891dd6b7eb93977bb10bb565b6084f431dd46b3eafc4"
+      },
+      {
+        "path": "reported_results/fixed_resource_damping/targets.csv",
+        "sha256": "153ad1df44acf09c3851c41ea3a8e0deed8474f68aae222d6e134fd45400408d"
+      }
+    ],
+    "outputs": [
+      "reported_results/figures/figure_damping_support_resource.png",
+      "reported_results/figures/figure_damping_support_resource.pdf"
+    ]
+  },
+  "figure_graph_placement_generalization.png": {
+    "inputs": [
+      {
+        "path": "reported_results/graph_placement/evaluation.csv",
+        "sha256": "800d7b3c9d5348df7206de3f93c33ed24f16eb4402b8404dd2e99fa2e3469250"
+      },
+      {
+        "path": "reported_results/graph_placement/random_spectral_pool.csv",
+        "sha256": "80b6f2d5646a09dcdb49eca5863b01c2c83625e8e43cf242cb5ba68f93eab5df"
+      }
+    ],
+    "outputs": [
+      "reported_results/figures/figure_graph_placement_generalization.png",
+      "reported_results/figures/figure_graph_placement_generalization.pdf"
+    ],
+    "median_modal_visibility_random_percentile": 1.0
+  },
+  "figure_modal_relaxation.png": {
+    "inputs": [
+      {
+        "path": "reported_results/modal_relaxation/audit.csv",
+        "sha256": "e2938119c7502f985e8ed8b3c7bc0fc3bab8c2db8ba394d443af41605bcb8b1c"
+      }
+    ],
+    "outputs": [
+      "reported_results/figures/figure_modal_relaxation.png",
+      "reported_results/figures/figure_modal_relaxation.pdf"
+    ]
+  },
+  "figure_finite_time_bound_validation.png": {
+    "inputs": [
+      {
+        "path": "reported_results/finite_time/tolerance_sweep.csv",
+        "sha256": "43d8e2bda2c66be4dd4bcd539abe9c7e8bc3e6c8ca2900584faf3a3bef548bca"
+      },
+      {
+        "path": "reported_results/finite_time/horizon_sweep.csv",
+        "sha256": "d2f1e3a14934490579941932c274b46753f8d809fd46008228b6137194c51d39"
+      }
+    ],
+    "outputs": [
+      "reported_results/figures/figure_finite_time_bound_validation.png",
+      "reported_results/figures/figure_finite_time_bound_validation.pdf"
+    ]
+  },
+  "figure_timestep_refinement.png": {
+    "inputs": [
+      {
+        "path": "reported_results/timestep_refinement/audit.csv",
+        "sha256": "52756be961d985ea1cf076a209ba334493b32ee10b910bcf9c17a4ee4c15d51c"
+      }
+    ],
+    "outputs": [
+      "reported_results/figures/figure_timestep_refinement.png",
+      "reported_results/figures/figure_timestep_refinement.pdf"
+    ]
+  }
+}

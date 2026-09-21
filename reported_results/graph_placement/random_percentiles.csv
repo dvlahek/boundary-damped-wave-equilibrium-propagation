@@ -1,0 +1,11 @@
+topology,seed,modal_unseen_visibility_random_percentile,modal_unseen_decay_random_percentile
+sparse_16,17,1.0,1.0
+sparse_16,29,0.984375,0.984375
+sparse_16,43,1.0,1.0
+sparse_16,71,1.0,1.0
+sparse_16,97,0.984375,0.984375
+sparse_25,17,1.0,1.0
+sparse_25,29,1.0,1.0
+sparse_25,43,1.0,1.0
+sparse_25,71,1.0,1.0
+sparse_25,97,1.0,1.0

@@ -1,0 +1,64 @@
+{
+  "version": "revision-1.0",
+  "profile": "paper",
+  "topologies": [
+    "sparse_16",
+    "sparse_25"
+  ],
+  "seeds": [
+    17,
+    29,
+    43,
+    71,
+    97
+  ],
+  "n_calibration_states": 8,
+  "n_unseen_evaluation_states": 8,
+  "n_random_spectral_sets_per_graph": 64,
+  "n_dynamic_cases": 30,
+  "all_damping_traces_matched": true,
+  "all_modal_calibration_sets_observable_on_unseen_states": true,
+  "median_modal_unseen_visibility_random_percentile": 1.0,
+  "median_modal_unseen_decay_random_percentile": 1.0,
+  "strategy_summary": [
+    {
+      "strategy": "calibration_modal",
+      "cases": 10,
+      "observable_fraction": 1.0,
+      "median_unseen_visibility": 0.2816834968703996,
+      "minimum_unseen_visibility": 0.20007899645519,
+      "median_unseen_decay_rate": 0.0008964450055817946,
+      "minimum_unseen_decay_rate": 0.0003991960694779695,
+      "median_relaxation_gradient_error": 0.0005339721082734132,
+      "maximum_relaxation_gradient_error": 0.001050583240902774,
+      "median_minimum_phase_convergence": 1.0,
+      "median_active_sample_steps": 692225.0
+    },
+    {
+      "strategy": "random_0",
+      "cases": 10,
+      "observable_fraction": 1.0,
+      "median_unseen_visibility": 0.15419057430485306,
+      "minimum_unseen_visibility": 0.0864581638402379,
+      "median_unseen_decay_rate": 0.0002786744198571278,
+      "minimum_unseen_decay_rate": 7.469531227807802e-05,
+      "median_relaxation_gradient_error": 0.0005870200687294996,
+      "maximum_relaxation_gradient_error": 0.009577563811152687,
+      "median_minimum_phase_convergence": 1.0,
+      "median_active_sample_steps": 2371162.5
+    },
+    {
+      "strategy": "topology_only",
+      "cases": 10,
+      "observable_fraction": 1.0,
+      "median_unseen_visibility": 0.14514641939267103,
+      "minimum_unseen_visibility": 0.09216102577874528,
+      "median_unseen_decay_rate": 0.00022826448661969305,
+      "minimum_unseen_decay_rate": 8.490555020090884e-05,
+      "median_relaxation_gradient_error": 0.0005002561869073941,
+      "maximum_relaxation_gradient_error": 0.00612493542972098,
+      "median_minimum_phase_convergence": 1.0,
+      "median_active_sample_steps": 1853062.5
+    }
+  ]
+}

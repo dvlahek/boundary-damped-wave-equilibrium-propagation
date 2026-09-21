@@ -1,0 +1,22 @@
+{
+  "version": "3.0",
+  "audit": "finite-time centered-gradient error",
+  "profile": "paper",
+  "n_tolerance_cases": 140,
+  "n_fixed_horizon_cases": 20,
+  "converged_fraction": 1.0,
+  "all_state_error_bounds_hold": true,
+  "all_residual_bounds_hold_for_converged_cases": true,
+  "maximum_converged_relative_gradient_error": 9.96688173331838,
+  "beta_optimum_vs_tolerance_loglog_slope": 0.31207855824714015,
+  "beta_optimum_vs_tolerance_r_squared": 0.7678736041543177,
+  "beta_optimum_vs_achieved_residual_loglog_slope": 0.321556541135229,
+  "beta_optimum_vs_achieved_residual_r_squared": 0.8241387256860595,
+  "theoretical_optimum_slope": 0.3333333333333333,
+  "median_fitted_exponential_rate": 0.016292340989519528,
+  "minimum_global_strong_convexity_lower_bound": 0.09291398515282806,
+  "all_audited_pairs_have_positive_global_mu": true,
+  "full_M3_theorem_bound_numerically_instantiated": false,
+  "bound_interpretation": "Observed finite-beta bias plus model-aware residual relaxation bound; the unknown M3 constant is not replaced by a fitted value.",
+  "passes_core_gate": true
+}
