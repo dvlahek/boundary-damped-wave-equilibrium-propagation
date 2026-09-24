@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Shared numerical tools for the REP v3 theorem audits.
+"""Shared numerical tools for the energy, gradient, and relaxation tests.
 
-The v3 audits are deliberately separate from the v2.3 learning benchmark.
-They use the same strictly convex chain energy, but test the hypotheses and
-predictions of the boundary-damping, centered-gradient, and finite-time-error
-theorems directly.
+The tests use the strictly convex chain energy from the learning benchmarks,
+with separate configurations for evaluating the assumptions and predictions
+of boundary damping, centered gradients, and finite-relaxation error.
 """
 
 from __future__ import annotations

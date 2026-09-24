@@ -1,14 +1,10 @@
 # Boundary-Damped Wave Equilibrium Propagation
 
-Reproducibility code for boundary-damped wave equilibrium propagation. The repository implements the theoretical audits, controlled synthetic
-benchmark, locked MNIST and Fashion-MNIST experiments, block-aware statistical analysis, non-chain graph audit, dark-mode control, and measurement-noise audit
-reported in the accompanying study.
+This repository contains the code and fixed numerical configurations for the accompanying study. It includes energy-balance and observability tests, finite-relaxation gradient validation, a fixed-resource damping-support experiment, calibration-to-unseen graph placement, controlled synthetic learning benchmarks, and image-model validation.
 
-The implementation uses a dimensionless damped wave model. It does not claim that a generic gravitational wave is a neural-network gradient. The tested
-claim: localized boundary dissipation can relax a wave-mediated system toward equilibrium, while centered equilibrium perturbations estimate
-the parameter gradient with a controlled finite-time error.
+The model uses dimensionless second-order dynamics. The gravitational-radiation discussion in the manuscript is restricted to the energy-flux analogy and does not enter the learning proofs or experiments.
 
-Every command writes its outputs under `results/`.
+Commands below write their outputs under `results/` unless an output directory is specified explicitly.
 
 ## Installation
 
@@ -63,7 +59,7 @@ python graph_topology_audit.py --profile quick --output results/quick_graph_topo
 python measurement_noise_audit.py --profile quick --output results/quick_measurement_noise
 ```
 
-### MNIST exact-centered training and locked dynamic audit
+### MNIST exact-centered training and fixed-configuration endpoint validation
 
 ```bash
 python v4_train_image_models.py --dataset mnist --profile quick --seeds 59 --cache-dir image_cache --output-dir results/quick_mnist_model
@@ -79,7 +75,7 @@ python v4_locked_replication.py --dataset mnist --mode quick --seeds 17 --models
 
 ## Reproduce the reported experiments
 
-Paper profiles are computationally expensive. Long-running commands save
+Full experiment profiles are computationally expensive. Long-running commands save
 intermediate output and resume when the same output directory is reused.
 
 ### Controlled synthetic benchmark: 400 runs
@@ -181,7 +177,7 @@ python graph_topology_audit.py --profile paper --output results/graph_topology_p
 python measurement_noise_audit.py --profile paper --output results/measurement_noise_paper
 ```
 
-### Combined V5 summary figure
+### Combined statistical, topology, and noise figure
 
 Run this after the paper statistics, graph, and noise commands.
 
@@ -210,12 +206,13 @@ python v4_train_image_models.py --dataset fashion_mnist --profile paper --seeds 
 python v4_locked_replication.py --dataset fashion_mnist --mode paper --seeds 17,29,43 --models-dir results/fashion_models --cache-file image_cache/fashion_mnist_pca_32.npz --gold-lock locks/v4_gold_solver_lock.json --output-dir results/fashion_audit
 ```
 
-## Locked numerical results and manuscript figures
+## Reported numerical results and manuscript figures
 
 The numerical tables used for the reported finite-relaxation, fixed-resource
 damping, modal-relaxation, graph-placement, and timestep-refinement results are
-stored under `reported_results/`. These are locked outputs from the paper-scale
-runs, not recomputed summaries.
+stored under `reported_results/`. These files contain the numerical outputs
+used in the reported analyses, with the associated input hashes recorded in
+the result manifest.
 
 The manuscript figures associated with those tables can be regenerated with:
 
@@ -232,9 +229,9 @@ python make_paper_figures.py \
 The generated `reported_results/figures/figure_provenance.json` records the
 SHA-256 hash of every numerical input used by each generated figure.
 `reported_results/manifest.json` records SHA-256 hashes and sizes for the
-locked result files retained in the repository.
+reported result files retained in the repository.
 
-## Registered configurations
+## Fixed experiment configurations
 
 - `locks/synthetic_paper_config.json` records the controlled synthetic setup.
 - `locks/v4_gold_solver_lock.json` records the image-audit solver settings.
@@ -242,9 +239,9 @@ locked result files retained in the repository.
   `locks/prior_mnist_audit_v34_phases.csv` keep confirmatory samples separate
   from the earlier calibration audits.
 - `locks/v5_experiment_config.json` records the block statistics, topology,
-  seeds, damping, and noise settings added in release `v1.2.0-paper`.
+  seeds, damping, and noise settings used in the reported experiments.
 
-Locked numerical tables and compact reported summaries are retained under
+Reported numerical tables and compact summaries are retained under
 `reported_results/`. Downloaded datasets, caches, model checkpoints, and
 per-step endpoint histories that are not needed to reproduce the reported
 tables remain excluded from Git. They can be regenerated using the documented

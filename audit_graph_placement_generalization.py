@@ -1,21 +1,12 @@
 #!/usr/bin/env python3
-"""Calibration-to-unseen graph-placement audit: calibration-locked graph damping placement.
+"""Evaluate sparse-graph damping placement on states excluded from calibration.
 
-The original sparse-graph audit selected the accessible set using modal
-information from the same free-state linearizations that were later evaluated.
-This control separates support selection from unseen-state evaluation.
-
-For each sparse graph we:
-1. keep a fixed supervised/readout set defined only from graph topology,
-2. use a disjoint calibration batch to select a modal-optimized damping set,
-3. freeze that damping set,
-4. evaluate modal visibility, spectral decay, and finite-budget EqProp gradient
-   generation on unseen states,
-5. compare against the topology-only damping set and deterministic random
-   accessible-node sets of the same size and total damping trace.
-
-The supervised cost remains fixed across all damping-placement strategies.  Only
-the support of the damping operator changes.
+The supervised/readout set is fixed from graph topology. Modal damping support
+is selected on calibration states and evaluated on disjoint states against
+topology-only and matched-size random accessible-node supports. The supervised
+cost, support size, and total damping trace are fixed across the strategies.
+Modal calibration uses global spectral information and is not a local online
+support-selection rule for an unknown network.
 """
 
 from __future__ import annotations
@@ -274,9 +265,8 @@ def run(profile: str, output_dir: Path) -> dict[str, object]:
             h_cal = state_hessian(q_cal, params, config)
             h_eval = state_hessian(q_eval, params, config)
 
-            # Modal optimization sees calibration states only.  We use the
-            # returned node set as damping support; the supervised/readout set
-            # in 'config' is not changed.
+            # Modal optimization uses calibration states only. The selected nodes
+            # define the damping support; the supervised/readout set is unchanged.
             selected_config = select_modal_boundary(
                 config,
                 params,
@@ -470,8 +460,8 @@ def run(profile: str, output_dir: Path) -> dict[str, object]:
         index=False,
     )
 
-    # Quantify how the calibration-locked placement compares with the random
-    # accessible-node distribution on unseen states.
+    # Compare the calibrated support with the random accessible-node
+    # distribution on unseen states.
     percentile_rows: list[dict[str, object]] = []
     for (topology, seed), block in evaluation.groupby(
         ["topology", "seed"], sort=True

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Audit REP v3 Theorem 1: energy balance and boundary observability.
+"""Numerical checks of the boundary-flux identity and modal observability.
 
-Outputs are isolated in their own directory.  The script checks both the
-calibrated v2.3 boundary region and the theorem-focused single-terminal
-damper.  A deliberately blind center-damped chain is included as a negative
-control rather than being mixed with learning failures.
+The experiment evaluates multi-node output-layer and single-terminal damping
+profiles. A symmetric center-damped chain provides a dark-mode negative
+control, distinct from learning-endpoint convergence tests.
 """
 
 from __future__ import annotations

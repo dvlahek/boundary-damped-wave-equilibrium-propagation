@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-"""Generate manuscript figures from locked numerical result tables.
+"""Generate manuscript figures from archived numerical result tables.
 
-The script does not rerun simulations. It reads the CSV outputs produced by the
-registered numerical audits, creates publication figures, and writes a
-provenance JSON containing the exact input paths and SHA-256 hashes used for
-each output figure.
-
-Expected result directories can be supplied explicitly. Defaults match the
-current paper-scale audit output names.
+The script reads numerical CSV outputs without rerunning the simulations,
+produces the manuscript figures, and records each input file and its SHA-256
+hash in the accompanying provenance JSON. Result directories can be supplied
+explicitly to reproduce the figures from a specified experiment run.
 """
 
 from __future__ import annotations
