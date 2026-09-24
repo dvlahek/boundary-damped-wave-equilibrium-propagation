@@ -210,9 +210,9 @@ python v4_locked_replication.py --dataset fashion_mnist --mode paper --seeds 17,
 
 The numerical tables used for the reported finite-relaxation, fixed-resource
 damping, modal-relaxation, graph-placement, and timestep-refinement results are
-stored under `reported_results/`. These files contain the numerical outputs
-used in the reported analyses, with the associated input hashes recorded in
-the result manifest.
+stored under `reported_results/`. The result manifest records the SHA-256
+checksums of the archived files, and the figure provenance file records the
+numerical inputs used to generate each figure.
 
 The manuscript figures associated with those tables can be regenerated with:
 
