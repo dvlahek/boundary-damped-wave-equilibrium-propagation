@@ -44,7 +44,7 @@ def make_audit_problem(
     beta: float = 0.035,
     boundary_variant: str = "paper_boundary",
 ) -> tuple[ChainConfig, ChainParameters, np.ndarray, np.ndarray]:
-    """Create a deterministic theorem-audit problem independent of paper seeds."""
+    """Create a deterministic chain instance for theory validation."""
     rng = np.random.default_rng(seed)
     x, targets = make_dataset(dataset, n_samples, rng)
     x = (x - np.mean(x, axis=0)) / np.maximum(np.std(x, axis=0), 1e-12)
