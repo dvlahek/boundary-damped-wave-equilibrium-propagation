@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply the frozen V4 damping and tolerance locks to new image models."""
+"""Validate image-model endpoints using fixed damping and solver tolerances."""
 
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ def load_gold_lock(path: Path) -> tuple[DampingCandidate, ToleranceCandidate, st
     raw = path.read_bytes()
     lock = json.loads(raw.decode("utf-8"))
     if not bool(lock.get("locked_before_v34_test_audit", False)):
-        raise ValueError("The supplied V4 gold tolerance profile was not locked before audit")
+        raise ValueError("The supplied damping and tolerance profile was not fixed before test evaluation")
     damping = lock["locked_damping_candidate"]
     tolerance = lock["selected_tolerance"]
     return (
@@ -70,10 +70,10 @@ def make_plot(curves: pd.DataFrame, methods: pd.DataFrame, dataset: str, output_
         axes[1].plot(
             block["budget"], block["minimum_phase_convergence_fraction"], marker="o", label=f"seed={seed}"
         )
-    axes[0].axhline(GRADIENT_ERROR_THRESHOLD, color="black", linestyle="--", label="registered 1%")
+    axes[0].axhline(GRADIENT_ERROR_THRESHOLD, color="black", linestyle="--", label="1% threshold")
     axes[0].set_xscale("log")
     axes[0].set_yscale("log")
-    axes[0].set(title=f"{dataset}: locked gradient fidelity", xlabel="budget", ylabel="relative error")
+    axes[0].set(title=f"{dataset}: gradient fidelity", xlabel="budget", ylabel="relative error")
     axes[0].legend(fontsize=7)
     axes[1].set_xscale("log")
     axes[1].set_ylim(0.0, 1.01)
@@ -82,7 +82,7 @@ def make_plot(curves: pd.DataFrame, methods: pd.DataFrame, dataset: str, output_
     axes[2].bar(methods["seed"].astype(str), methods["gradient_vs_exact_centered_relative_error"])
     axes[2].axhline(GRADIENT_ERROR_THRESHOLD, color="black", linestyle="--")
     axes[2].set_yscale("log")
-    axes[2].set(title="Final locked audit", xlabel="seed", ylabel="relative gradient error")
+    axes[2].set(title="Final relaxation-gradient error", xlabel="seed", ylabel="relative gradient error")
     fig.tight_layout()
     fig.savefig(output_dir / f"{dataset}_locked_replication_v4.png", dpi=190)
     plt.close(fig)
@@ -138,7 +138,7 @@ def run(
         raise ValueError("Not enough unobserved test samples remain")
     for seed in seeds:
         if seed in completed:
-            print(f"{dataset} locked seed={seed} already completed; skipping")
+            print(f"{dataset} seed={seed} validation already completed; skipping")
             continue
         rng = np.random.default_rng(seed + 1_400_000)
         indices = rng.choice(available, size=audit_samples, replace=False)
@@ -179,7 +179,7 @@ def run(
     methods_df = pd.DataFrame(method_rows)
     make_plot(curves_df, methods_df, dataset, output_dir)
     summary = {
-        "version": "4.1-locked-replication",
+        "version": "4.1-fixed-configuration-validation",
         "dataset": dataset,
         "trained_models_unchanged_during_audit": True,
         "damping_candidate": asdict(damping),

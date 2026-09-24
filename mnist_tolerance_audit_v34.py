@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Locked-tolerance MNIST audit for radiative equilibrium propagation V3.4.
+"""Evaluate MNIST boundary relaxation under calibrated solver tolerances.
 
-V3.4 never retrains the MNIST models and never recalibrates the boundary
-damping profile.  It reads the profile that V3.3 locked before its test audit,
-calibrates only solver tolerances on fixed MNIST training-pool samples, writes
-a second lock, and then evaluates fixed official-test samples.  Seeds 29 and 43
-are confirmatory model seeds; seed 17 is calibration-support evidence.
+The trained models and damping support remain fixed. Solver tolerances are
+selected on training-pool samples and evaluated on separate test samples.
+Seeds 29 and 43 provide confirmatory model results; seed 17 supports
+calibration. The recorded configurations identify the settings fixed before
+test evaluation.
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ class ToleranceCandidate:
 
 
 def tolerance_grid() -> list[ToleranceCandidate]:
-    """Registered calibration grid, from the V3.3 control to 20x tighter."""
+    """Candidate solver tolerances spanning the reference profile and tighter settings."""
     return [
         ToleranceCandidate(1e-4, 2e-5),
         ToleranceCandidate(1e-4, 1e-5),
@@ -81,20 +81,20 @@ def tolerance_grid() -> list[ToleranceCandidate]:
 def load_locked_damping(path: Path) -> tuple[DampingCandidate, dict[str, object], str]:
     if not path.exists():
         raise FileNotFoundError(
-            f"V3.3 damping lock was not found: {path}. Run V3.3 first or copy its results folder."
+            f"V3.3 damping configuration not found: {path}. Run the calibration or provide its results folder."
         )
     raw = path.read_bytes()
     lock = json.loads(raw.decode("utf-8"))
     if not bool(lock.get("locked_before_test_audit", False)):
-        raise ValueError("The supplied V3.3 damping profile was not locked before test audit")
+        raise ValueError("The supplied V3.3 damping profile was not fixed before test evaluation")
     selected = lock.get("selected_candidate")
     if not isinstance(selected, dict):
-        raise ValueError("The V3.3 lock does not contain selected_candidate")
+        raise ValueError("The V3.3 configuration does not contain selected_candidate")
     candidate = DampingCandidate(
         int(selected["width"]), float(selected["trace"]), float(selected["power"])
     )
     if lock.get("selected_candidate_key") not in (None, candidate.key):
-        raise ValueError("The V3.3 candidate key does not match selected_candidate")
+        raise ValueError("The V3.3 configuration key does not match selected_candidate")
     return candidate, lock, hashlib.sha256(raw).hexdigest()
 
 
@@ -533,7 +533,7 @@ def make_plots(
     axes[1, 0].set_xscale("log")
     axes[1, 0].set_yscale("log")
     axes[1, 0].set(
-        title="Locked boundary gradient vs exact-centered",
+        title="Boundary gradient vs exact-centered EqProp",
         xlabel="per-phase step budget",
         ylabel="relative error",
     )
@@ -720,7 +720,7 @@ def run(
     completed_seeds = {int(row["seed"]) for row in method_rows}
     for seed in audit_seeds:
         if seed in completed_seeds:
-            print(f"seed={seed} locked V3.4 audit already completed; skipping")
+            print(f"seed={seed} endpoint validation already completed; skipping")
             continue
         params, config = models[seed]
         audit_rng = np.random.default_rng(seed + 1_100_000)
@@ -766,7 +766,7 @@ def run(
     make_plots(calibration, curves_df, output_dir)
     confirmatory = methods_df[methods_df["confirmatory_model_seed"].astype(bool)]
     summary = {
-        "version": "3.4-mnist-locked-tolerance-audit",
+        "version": "3.4-mnist-tolerance-validation",
         "mode": mode,
         "trained_models_unchanged": True,
         "damping_profile_recalibrated": False,
@@ -812,8 +812,9 @@ def run(
             "maximum_gradient_change_from_previous_budget": GRADIENT_STABILITY_THRESHOLD,
         },
         "interpretation": (
-            "V3.3 damping is unchanged. Tolerances are calibrated on training-pool samples "
-            "and locked before official-test audit. Seeds 29 and 43 are confirmatory."
+            "The damping profile is unchanged. Solver tolerances are selected on training-pool "
+            "samples and held fixed during test evaluation. Seeds 29 and 43 provide "
+            "confirmatory model results."
         ),
     }
     (output_dir / "mnist_boundary_summary_v34.json").write_text(

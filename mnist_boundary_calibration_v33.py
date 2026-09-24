@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Disjoint calibration and confirmatory audit for MNIST boundary damping.
+"""Calibrate boundary damping on training samples and evaluate on disjoint test data.
 
-The trained v3.1 MNIST models are never changed.  A boundary damping profile is
-selected using seed 17 and training-pool calibration samples only.  The profile
-is then locked before evaluation on official test samples.  Model seeds 29 and
-43 are the confirmatory model seeds; seed 17 is retained as a transparent
-calibration-support result.  Budget curves are obtained from single continued
-physical trajectories rather than independent reruns at every horizon.
+The trained MNIST models are not modified. Damping support is selected using
+seed 17 and training-pool calibration samples, then held fixed for test
+validation. Seeds 29 and 43 provide confirmatory model results; seed 17
+provides the calibration-support result. Budget curves follow continued
+physical trajectories rather than separate runs at each horizon.
 """
 
 from __future__ import annotations
@@ -751,7 +750,7 @@ def run(
     completed_seeds = {int(row["seed"]) for row in method_rows}
     for seed in audit_seeds:
         if seed in completed_seeds:
-            print(f"seed={seed} locked audit already completed; skipping")
+            print(f"seed={seed} validation already completed; skipping")
             continue
         params, config = models[seed]
         audit_rng = np.random.default_rng(seed + 900_000)
@@ -809,7 +808,7 @@ def run(
             "maximum_gradient_vs_exact_centered_relative_error": GRADIENT_ERROR_THRESHOLD,
             "minimum_gradient_cosine": GRADIENT_COSINE_THRESHOLD,
         },
-        "interpretation": "Calibration uses training-pool samples only. The selected boundary profile is locked before test audit. Seeds 29 and 43 are confirmatory model seeds.",
+        "interpretation": "Damping support is selected using training-pool samples and held fixed for test evaluation. Seeds 29 and 43 provide confirmatory model results.",
     }
     (output_dir / "mnist_boundary_summary_v33.json").write_text(
         json.dumps(summary, indent=2), encoding="utf-8"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train exact-centered EqProp image models for locked V4 replication audits."""
+"""Train exact-centered EqProp image models for independent endpoint validation."""
 
 from __future__ import annotations
 
@@ -179,7 +179,7 @@ def run(
         "dataset": dataset,
         "dataset_title": DATASETS[dataset]["title"],
         "openml_id": DATASETS[dataset]["openml_id"],
-        "training_protocol": "exact-centered EqProp; locked physical audit is separate",
+        "training_protocol": "exact-centered EqProp; physical endpoint validation is performed separately",
         "profile": profile_name,
         "profile_config": asdict(profile),
         "requested_seeds": list(seeds),
