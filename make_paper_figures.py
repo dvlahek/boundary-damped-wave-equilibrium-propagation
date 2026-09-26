@@ -20,6 +20,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from figure_architecture_overview_source import render_architecture_figure
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -50,76 +52,13 @@ def finish_figure(fig, output: Path, provenance: dict, inputs: list[Path]) -> No
 
 
 def architecture_overview(output_dir: Path, provenance: dict) -> None:
-    """Create a data-free schematic of the physical learning architecture."""
-    fig, ax = plt.subplots(figsize=(10.8, 4.5))
-    ax.set_xlim(-0.7, 9.8)
-    ax.set_ylim(-1.4, 2.4)
-    ax.axis("off")
-
-    x = np.arange(8)
-    y = np.zeros_like(x, dtype=float)
-    ax.plot(x, y, linewidth=1.8)
-    ax.scatter(x, y, s=420, zorder=3)
-    for i in range(7):
-        ax.text(i + 0.5, 0.18, "conservative", ha="center", va="bottom", fontsize=9)
-
-    ax.text(0, -0.62, "input support", ha="center", fontsize=10)
-    ax.annotate(
-        "input",
-        xy=(0, 0.15),
-        xytext=(-0.4, 1.25),
-        arrowprops={"arrowstyle": "->", "linewidth": 1.3},
-        ha="center",
-        fontsize=10,
-    )
-
-    ax.text(7, -0.62, "readout / damping support", ha="center", fontsize=10)
-    for node in (5, 6, 7):
-        ax.annotate(
-            "",
-            xy=(node, -0.05),
-            xytext=(node, -0.95),
-            arrowprops={"arrowstyle": "->", "linewidth": 1.4},
-        )
-    ax.text(6, -1.18, "localized dissipation", ha="center", fontsize=10)
-
-    ax.text(3.5, 1.72, "free phase  $\\beta=0$", ha="center", fontsize=11)
-    ax.text(5.6, 1.18, "$+\\beta$", ha="center", fontsize=11)
-    ax.text(7.2, 1.18, "$-\\beta$", ha="center", fontsize=11)
-    ax.annotate(
-        "",
-        xy=(5.35, 0.35),
-        xytext=(5.6, 0.98),
-        arrowprops={"arrowstyle": "->", "linewidth": 1.2},
-    )
-    ax.annotate(
-        "",
-        xy=(7.0, 0.35),
-        xytext=(7.2, 0.98),
-        arrowprops={"arrowstyle": "->", "linewidth": 1.2},
-    )
-    ax.text(
-        8.55,
-        0.35,
-        "local centered\nparameter contrast",
-        ha="center",
-        va="center",
-        fontsize=10,
-    )
-    ax.annotate(
-        "",
-        xy=(8.0, 0.2),
-        xytext=(7.45, 0.2),
-        arrowprops={"arrowstyle": "->", "linewidth": 1.3},
-    )
-    ax.set_title(
-        "Conservative transport, localized relaxation, and centered EqProp update",
-        fontsize=12,
-    )
-
-    output = output_dir / "figure_architecture_overview.png"
-    finish_figure(fig, output, provenance, [])
-    provenance[output.name]["note"] = "Data-free schematic generated directly by make_paper_figures.py"
+    """Generate the architecture schematic from its standalone source."""
+    png, pdf = render_architecture_figure(output_dir)
+    provenance[png.name] = {
+        "inputs": [],
+        "outputs": [str(png), str(pdf)],
+        "note": "Illustrative eight-node chain, with four damped readout-side nodes",
+    }
 
 
 def damping_support_figure(

@@ -24,6 +24,16 @@ Run all deterministic unit tests:
 python -m unittest discover -s tests -v
 ```
 
+### Figure 1: architecture schematic
+
+The illustrative three-panel architecture is generated independently of the
+numerical result tables. The same eight-node chain and four-node damping support
+are shown in the physical architecture and in all three relaxation phases.
+
+```bash
+python figure_architecture_overview_source.py --output-dir paper_figures
+```
+
 ## Quick verification
 
 Quick profiles verify the installation and execution paths. They are smoke
