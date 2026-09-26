@@ -19,12 +19,12 @@
   },
   "files": {
     "figures/figure_architecture_overview.pdf": {
-      "sha256": "ecfccf6ba162a7c2e6d66ef902a481530c59af9549b7c846268231d927ea8a73",
-      "bytes": 14934
+      "sha256": "88084dfaac2c9d590ad9be29688247688a3beb6ac4b8138eb4591beb8775cd0f",
+      "bytes": 35114
     },
     "figures/figure_architecture_overview.png": {
-      "sha256": "08effd5e2906eb2e082d5ef4e82db867808a476331e015521904c92ee4a675dd",
-      "bytes": 126876
+      "sha256": "a33c27880296ab61e465468607e53853aefeca1d3fc92c2d9c8c820756d09a55",
+      "bytes": 148804
     },
     "figures/figure_damping_support_resource.pdf": {
       "sha256": "b2e699ff970a7f464e06c835a84b1e4144c3db8512dea97aa131f9662cfc15e3",
@@ -59,8 +59,8 @@
       "bytes": 359942
     },
     "figures/figure_provenance.json": {
-      "sha256": "d2219e560d213a9d83ca96012be4a3a30b9336a57e3bc264292c5c7336d02dfc",
-      "bytes": 2991
+      "sha256": "f41d725d92f81a83e83eb24e8a3f8ba6bd68d49d41c4be7aad3ccf38862647d8",
+      "bytes": 3226
     },
     "figures/figure_timestep_refinement.pdf": {
       "sha256": "a27f8d1529cd2fe374998745a348a66a8e261e55d73fddf8061548b243e15bb6",

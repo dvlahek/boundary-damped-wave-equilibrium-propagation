@@ -4,11 +4,14 @@
     "purpose": "Manuscript figure generation from locked numerical CSV outputs"
   },
   "figure_architecture_overview.png": {
+    "inputs": [],
     "outputs": [
       "reported_results/figures/figure_architecture_overview.png",
       "reported_results/figures/figure_architecture_overview.pdf"
     ],
-    "note": "Data-free schematic generated directly by make_paper_figures.py"
+    "source_script": "figure_architecture_overview_source.py",
+    "source_sha256": "478bec3959ce7670c03c98a169df92cb5ae4ee5cd5b15b61816b21b80a0b872b",
+    "note": "Data-free illustrative eight-node chain with four damped readout-side nodes; the same support is used in all relaxation phases."
   },
   "figure_damping_support_resource.png": {
     "inputs": [
