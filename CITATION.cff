@@ -2,9 +2,10 @@ cff-version: 1.2.0
 message: "If you use this software, please cite the associated article and this software release."
 type: software
 title: "Boundary-Damped Wave Equilibrium Propagation"
+version: 1.0.0
+abstract: "Reference implementation and fixed numerical configurations for the boundary-damped wave equilibrium propagation study. The archive includes relaxation and gradient-validation routines, damping-support and sparse-graph experiments, synthetic and image-model benchmarks, automated tests, and reported numerical results."
 authors:
   - family-names: Vlahek
     given-names: Dino
-date-released: 2026-08-13
 license: MIT
 repository-code: "https://github.com/dvlahek/boundary-damped-wave-equilibrium-propagation"
