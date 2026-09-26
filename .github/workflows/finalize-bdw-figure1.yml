@@ -1,0 +1,89 @@
+name: Finalize BDW Figure 1 archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/finalize-bdw-figure1.yml
+
+permissions:
+  contents: write
+
+jobs:
+  figure1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned plotting dependencies
+        run: python -m pip install numpy==2.3.5 matplotlib==3.10.8
+      - name: Render Figure 1 and synchronize provenance and manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object figure_architecture_overview_source.py)" = "a2109bead0983b28687a5688b4fa67d6c70469e2"
+          python figure_architecture_overview_source.py --output-dir reported_results/figures
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+
+          root = Path("reported_results")
+          figures = root / "figures"
+          manifest_path = root / "manifest.json"
+          provenance_path = figures / "figure_provenance.json"
+          source_path = Path("figure_architecture_overview_source.py")
+          digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          original = {name: info.copy() for name, info in manifest["files"].items()}
+          provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+          provenance["figure_architecture_overview.png"] = {
+              "inputs": [],
+              "outputs": [
+                  "reported_results/figures/figure_architecture_overview.png",
+                  "reported_results/figures/figure_architecture_overview.pdf"
+              ],
+              "source_script": str(source_path),
+              "source_sha256": digest(source_path),
+              "note": "Data-free illustrative eight-node chain with four damped readout-side nodes; the same support is used in all relaxation phases."
+          }
+          provenance_path.write_text(json.dumps(provenance, indent=2) + "\n", encoding="utf-8")
+          updated = {
+              "figures/figure_architecture_overview.png",
+              "figures/figure_architecture_overview.pdf",
+              "figures/figure_provenance.json",
+          }
+          for name in updated:
+              path = root / name
+              manifest["files"][name] = {
+                  "sha256": digest(path),
+                  "bytes": path.stat().st_size
+              }
+          assert all(manifest["files"][name] == info for name, info in original.items() if name not in updated)
+          manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+          for name, info in manifest["files"].items():
+              path = root / name
+              assert path.is_file(), name
+              assert path.stat().st_size == info["bytes"], name
+              assert digest(path) == info["sha256"], name
+          print("ARCHIVE_MANIFEST_VERIFIED", len(manifest["files"]))
+          print("SOURCE_SHA256", digest(source_path))
+          for name in sorted(updated):
+              print("UPDATED", name, manifest["files"][name]["sha256"])
+          PY
+      - name: Commit audited Figure 1 assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reported_results/figures/figure_architecture_overview.png reported_results/figures/figure_architecture_overview.pdf reported_results/figures/figure_provenance.json reported_results/manifest.json
+          git diff --cached --name-only
+          git diff --cached --quiet && { echo "No changes to commit"; exit 0; }
+          git commit -m "Synchronize generated Figure 1 assets and provenance"
+          git push origin HEAD:main
